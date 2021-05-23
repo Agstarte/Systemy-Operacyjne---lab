@@ -64,22 +64,20 @@ function query_actor () {
 }
 
 #+ 1.0: Dodaj opcję -y ROK: wyszuka wszystkie filmy nowsze niż ROK.
-# Próbowałam wybrać rok z pliku ale się nie udało
 function query_rok () {
     # Returns list of movies from ${1} newer than ${2}
     local -r MOVIES_LIST=${1}
     local -r QUERY=${2}
 
     local RESULTS_LIST=()
+    
     for MOVIE_FILE in ${MOVIES_LIST}; do
-        # year=$(grep "Year: [0-9]{4}" "${MOVIE_FILE}" | grep -E '[0-9]{4}')
-        year=$(grep -Eq "| Year: [0-9][0-9][0-9][0-9]" "${MOVIE_FILE}")
-        echo "ROK: ${year}"
-        # if grep "| Year" "${MOVIE_FILE}" | grep -q "${QUERY}"; then
-        #     RESULTS_LIST+=( "${MOVIE_FILE}" )
-        # fi
+        year="$(grep "| Year" "${MOVIE_FILE}" | cut -d':' -f2)"        
+        if [[ year -gt ${QUERY} ]]; then           
+            RESULTS_LIST+=( "${MOVIE_FILE}" )
+        fi
     done
-    # echo "${RESULTS_LIST[@]:-}"
+    echo "${RESULTS_LIST[@]:-}"
 }
 
 
